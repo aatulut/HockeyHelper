@@ -1,8 +1,7 @@
 const url = "https://liiga.fi/api/v2/standings?season=2027";
 
-const teamName = process.argv[2];
 
-async function getStandings() {
+async function getStandings(teamName = "hifk") {
     try {
         const response = await fetch(url);
 
@@ -18,12 +17,11 @@ const team = data.season.find(item =>
 );
 
         if (!team) {
-            console.log("Joukkuetta ei löytynyt!");
-            return;
-        }
+    return { message: "Team not found" };
+}
 
-        // Valitaan halutut attribuutit
         const stats = {
+            teamName: team.teamName,
             ranking: team.ranking,
             games: team.games,
             wins: team.wins,
@@ -35,15 +33,11 @@ const team = data.season.find(item =>
             goalsAgainst: team.goalsAgainst,
         };
 
-        console.log(stats);
+        return stats;
 
     } catch (error) {
-        console.log("Virhe:", error.message);
+        return { error: error.message };
     }
 }
 
-if (!teamName) {
-    console.log("Anna joukkue, esim. node standings.js HIFK");
-} else {
-    getStandings();
-}
+module.exports = getStandings;

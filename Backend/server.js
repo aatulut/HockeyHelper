@@ -1,3 +1,4 @@
+const getStandings = require("./standings");
 const getNextGame = require("./games");
 const express = require("express");
 const cors = require("cors");
@@ -8,12 +9,19 @@ const PORT = 3000;
 app.use(cors());
 
 app.get("/api/games", async (req, res) => {
-  const game = await getNextGame("games");
+  const team = req.query.team || "hifk";
+
+  const game = await getNextGame(team);
+
   res.json(game);
 });
 
-app.get("/api/standings", (req, res) => {
-  res.json({ message: "Standings backend respond" });
+app.get("/api/standings", async (req, res) => {
+  const team = req.query.team || "HIFK";
+
+  const standings = await getStandings(team);
+
+  res.json(standings);
 });
 
 app.listen(PORT, () => {
