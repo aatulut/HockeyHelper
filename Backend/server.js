@@ -1,3 +1,4 @@
+const getNextGame = require("./games");
 const express = require("express");
 const cors = require("cors");
 
@@ -6,8 +7,9 @@ const PORT = 3000;
 
 app.use(cors());
 
-app.get("/api/games", (req, res) => {
-  res.json({ message: "Games backend respond" });
+app.get("/api/games", async (req, res) => {
+  const game = await getNextGame("games");
+  res.json(game);
 });
 
 app.get("/api/standings", (req, res) => {

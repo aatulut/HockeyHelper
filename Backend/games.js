@@ -1,9 +1,7 @@
 
 const url = "https://liiga.fi/api/v2/games?season=2027&tournament=runkosarja";
 
-const mode = (process.argv[2] || "hifk").toLowerCase();
-
-async function getNextGame() {
+async function getNextGame(mode = "hifk") {
     try {
         const response = await fetch(url);
 
@@ -52,32 +50,26 @@ const upcomingGames = games.filter(game => {
         const game = upcomingGames[0];
 
         if (!game) {
-            console.log("Tulevia otteluita ei löytynyt.");
-            return;
+            return { message: "No upcoming matches found" };
         }
 
-        console.log(
-            "Match:",
-            game.homeTeam.teamName,
-            "-",
-            game.awayTeam.teamName
-        );
+        return {
+    homeTeam: game.homeTeam.teamName,
+    awayTeam: game.awayTeam.teamName,
 
-        console.log(
-            "Date and time:",
-            new Date(game.start).toLocaleString("fi-FI", {
-                timeZone: "Europe/Helsinki"
-            })
-        );
+    date: new Date(game.start).toLocaleString("fi-FI", {
+        timeZone: "Europe/Helsinki"
+    }),
 
-        console.log("Rink:", game.iceRink?.name ?? "Unknown");
-        console.log("City:", game.iceRink?.city ?? "Unknown");
-        console.log("Address:", game.iceRink?.streetAddress ?? "Unknown");
-        console.log("Tickets:", game.buyTicketsUrl ?? "No vendor listed");
+    rink: game.iceRink?.name ?? "Unknown",
+    city: game.iceRink?.city ?? "Unknown",
+    address: game.iceRink?.streetAddress ?? "Unknown",
+    tickets: game.buyTicketsUrl ?? "No vendor listed"
+};
 
     } catch (error) {
         console.log("Error:", error.message);
     }
 }
 
-getNextGame();
+module.exports = getNextGame;
