@@ -2,31 +2,36 @@ import { useState } from "react";
 
 function App() {
   const [game, setGame] = useState(null);
+  const [team, setTeam] = useState("HIFK");
+  const [standings, setStandings] = useState(null);
 
 async function getGames() {
-  const response = await fetch("http://localhost:3000/api/games");
-  const data = await response.json();
+  const gameResponse = await fetch(
+    `http://localhost:3000/api/games?team=${team}`
+  );
 
-  setGame(data);
+  const gameData = await gameResponse.json();
+  const standingsResponse = await fetch(
+    `http://localhost:3000/api/standings?team=${team}`
+  );
+  const standingsData = await standingsResponse.json();
+
+  setGame(gameData);
+  setStandings(standingsData);
 }
-
-  async function getStandings() {
-    const response = await fetch("http://localhost:3000/api/standings");
-    const data = await response.json();
-
-    setMessage(data.message);
-  }
 
   return (
     <div>
       <h1>HockeyHelper</h1>
 
-      <button onClick={getGames}>
-        Games
-      </button>
+<input
+  value={team}
+  onChange={(event) => setTeam(event.target.value)}
+  placeholder="Enter team"
+/>
 
-      <button onClick={getStandings}>
-        Standings
+      <button onClick={getGames}>
+        Find next game
       </button>
 
      {game && (
@@ -45,6 +50,22 @@ async function getGames() {
     </a>
   </div>
 )}
+{standings && (
+  <div>
+    <h2>{standings.teamName} standings</h2>
+
+    <p>Ranking: {standings.ranking}</p>
+    <p>Games: {standings.games}</p>
+    <p>Wins: {standings.wins}</p>
+    <p>Overtime wins: {standings.overtimeWins}</p>
+    <p>Losses: {standings.losses}</p>
+    <p>Ties: {standings.ties}</p>
+    <p>Points: {standings.points}</p>
+    <p>Goals: {standings.goals}</p>
+    <p>Goals against: {standings.goalsAgainst}</p>
+  </div>
+)}
+
     </div>
   );
 }

@@ -2,6 +2,7 @@
 const url = "https://liiga.fi/api/v2/games?season=2027&tournament=runkosarja";
 
 async function getNextGame(mode = "hifk") {
+    mode = mode.toLowerCase();
     try {
         const response = await fetch(url);
 
@@ -21,9 +22,9 @@ const upcomingGames = games.filter(game => {
     const away = game.awayTeam?.teamName;
     const city = game.iceRink?.city?.toLowerCase();
 
-    const isHIFK =
-        home?.toLowerCase() === "hifk" ||
-        away?.toLowerCase() === "hifk";
+    const isSelectedTeam =
+    home?.toLowerCase() === mode ||
+    away?.toLowerCase() === mode;
 
     const isPKSeutu =
         city === "helsinki" ||
@@ -32,8 +33,8 @@ const upcomingGames = games.filter(game => {
 
     const isFuture = new Date(game.start) > new Date();
 
-    if (mode === "hifk") {
-        return isHIFK && isFuture && !game.ended;
+    if (mode !== "games") {
+        return isSelectedTeam && isFuture && !game.ended;
     }
 
     if (mode === "games") {
