@@ -4,8 +4,39 @@ function App() {
   const [game, setGame] = useState(null);
   const [team, setTeam] = useState("HIFK");
   const [standings, setStandings] = useState(null);
+  const [username, setUsername] = useState("");
+  const [favoriteTeam, setFavoriteTeam] = useState("");
+  const [homeCity, setHomeCity] = useState("");
+  const [profileMessage, setProfileMessage] = useState("");
 
-async function getGames() {
+ async function saveProfile() {
+  const response = await fetch("http://localhost:3000/api/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      username: username,
+      favoriteTeam: favoriteTeam,
+      homeCity: homeCity
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    setProfileMessage(data.message);
+    return;
+  }
+
+  setProfileMessage("Profile saved");
+
+  setUsername("");
+  setFavoriteTeam("");
+  setHomeCity("");
+}
+
+  async function getGames() {
   const gameResponse = await fetch(
     `http://localhost:3000/api/games?team=${team}`
   );
@@ -25,10 +56,34 @@ async function getGames() {
       <h1>HockeyHelper</h1>
 
 <input
+  value={username}
+  onChange={(event) => setUsername(event.target.value)}
+  placeholder="Username"
+/>
+
+<input
+  value={favoriteTeam}
+  onChange={(event) => setFavoriteTeam(event.target.value)}
+  placeholder="Favorite team"
+/>
+
+<input
+  value={homeCity}
+  onChange={(event) => setHomeCity(event.target.value)}
+  placeholder="Home city"
+/>
+
+<input
   value={team}
   onChange={(event) => setTeam(event.target.value)}
   placeholder="Enter team"
 />
+
+      <button onClick={saveProfile}>
+        Save profile
+      </button>
+
+<p>{profileMessage}</p>
 
       <button onClick={getGames}>
         Find next game
