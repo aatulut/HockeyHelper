@@ -33,6 +33,7 @@ function App() {
 
   setCurrentUser(data);
   setProfileMessage("");
+  setTeam(data.favoriteTeam);
 }
 
  async function saveProfile() {
