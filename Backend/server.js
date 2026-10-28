@@ -57,7 +57,11 @@ app.post("/api/users", async (req, res) => {
 
   const savedUser = await user.save();
 
-  res.status(201).json(savedUser);
+  res.status(201).json({
+  username: savedUser.username,
+  favoriteTeam: savedUser.favoriteTeam,
+  homeCity: savedUser.homeCity
+});
 });
 
 app.get("/api/users/:username", async (req, res) => {
