@@ -8,17 +8,19 @@ function App() {
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [homeCity, setHomeCity] = useState("");
   const [profileMessage, setProfileMessage] = useState("");
+  const [password, setPassword] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showRegister, setShowRegister] = useState(false);
 
- async function saveProfile() {
-  const response = await fetch("http://localhost:3000/api/users", {
+  async function login() {
+  const response = await fetch("http://localhost:3000/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
       username: username,
-      favoriteTeam: favoriteTeam,
-      homeCity: homeCity
+      password: password
     })
   });
 
@@ -29,11 +31,40 @@ function App() {
     return;
   }
 
+  setCurrentUser(data);
+  setProfileMessage("");
+}
+
+ async function saveProfile() {
+  const response = await fetch("http://localhost:3000/api/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      username: username,
+      favoriteTeam: favoriteTeam,
+      homeCity: homeCity,
+      password: password
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    setProfileMessage(data.message);
+    return;
+  }
+
+  setCurrentUser(data);
+  setTeam(data.favoriteTeam);
+
   setProfileMessage("Profile saved");
 
   setUsername("");
   setFavoriteTeam("");
   setHomeCity("");
+  setPassword("");
 }
 
   async function getGames() {
@@ -51,37 +82,96 @@ function App() {
   setStandings(standingsData);
 }
 
+if (!currentUser && showRegister) {
+  return (
+    <div>
+      <h1>Create account</h1>
+
+      <input
+        value={username}
+        onChange={(event) => setUsername(event.target.value)}
+        placeholder="Username"
+      />
+
+      <input
+        type="password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        placeholder="Password"
+      />
+
+      <input
+        value={favoriteTeam}
+        onChange={(event) => setFavoriteTeam(event.target.value)}
+        placeholder="Favorite team"
+      />
+
+      <input
+        value={homeCity}
+        onChange={(event) => setHomeCity(event.target.value)}
+        placeholder="Home city"
+      />
+
+      <button onClick={saveProfile}>
+        Create account
+      </button>
+
+      <button onClick={() => setShowRegister(false)}>
+        Back to login
+      </button>
+
+      <p>{profileMessage}</p>
+    </div>
+  );
+}
+
+if (!currentUser) {
   return (
     <div>
       <h1>HockeyHelper</h1>
 
-<input
-  value={username}
-  onChange={(event) => setUsername(event.target.value)}
-  placeholder="Username"
-/>
+      <input
+        value={username}
+        onChange={(event) => setUsername(event.target.value)}
+        placeholder="Username"
+      />
 
-<input
-  value={favoriteTeam}
-  onChange={(event) => setFavoriteTeam(event.target.value)}
-  placeholder="Favorite team"
-/>
+      <input
+        type="password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        placeholder="Password"
+      />
 
-<input
-  value={homeCity}
-  onChange={(event) => setHomeCity(event.target.value)}
-  placeholder="Home city"
-/>
+      <button onClick={login}>
+        Login
+      </button>
+
+      <p>No existing account?</p>
+
+      <button onClick={() => setShowRegister(true)}>
+        Register
+      </button>
+
+      <p>{profileMessage}</p>
+    </div>
+  );
+}
+
+  return (
+    <div>
+      <h1>HockeyHelper</h1>
+
+<h2>Welcome {currentUser.username}</h2>
+
+<p>Favorite team: {currentUser.favoriteTeam}</p>
+<p>Home city: {currentUser.homeCity}</p>
 
 <input
   value={team}
   onChange={(event) => setTeam(event.target.value)}
   placeholder="Enter team"
 />
-
-      <button onClick={saveProfile}>
-        Save profile
-      </button>
 
 <p>{profileMessage}</p>
 
