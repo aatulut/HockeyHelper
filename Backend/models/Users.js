@@ -4,7 +4,10 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
+    lowercase: true
+
   },
   favoriteTeam: String,
   homeCity: String
