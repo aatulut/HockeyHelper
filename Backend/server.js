@@ -1,5 +1,8 @@
 const getStandings = require("./standings");
-const getNextGame = require("./games");
+const {
+  getNextGame,
+  getNextLocalGame
+} = require("./games");
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -16,6 +19,20 @@ app.get("/api/games", async (req, res) => {
   const team = req.query.team || "hifk";
 
   const game = await getNextGame(team);
+
+  res.json(game);
+});
+
+app.get("/api/games/local", async (req, res) => {
+  const city = req.query.city;
+
+  if (!city) {
+    return res.status(400).json({
+      message: "City is required"
+    });
+  }
+
+  const game = await getNextLocalGame(city);
 
   res.json(game);
 });

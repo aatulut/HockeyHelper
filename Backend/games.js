@@ -74,4 +74,47 @@ const upcomingGames = games.filter(game => {
     }
 }
 
-module.exports = getNextGame;
+async function getNextLocalGame(city) {
+  const response = await fetch(url);
+  const games = await response.json();
+
+  const upcomingLocalGames = games.filter((game) => {
+    const gameCity = game.iceRink?.city?.toLowerCase();
+    const isFuture = new Date(game.start) > new Date();
+
+    return (
+      gameCity === city.trim().toLowerCase() &&
+      isFuture &&
+      !game.ended
+    );
+  });
+
+  upcomingLocalGames.sort(
+    (a, b) => new Date(a.start) - new Date(b.start)
+  );
+
+  const game = upcomingLocalGames[0];
+
+  if (!game) {
+    return {
+      message: "No upcoming games found in this city"
+    };
+  }
+
+  return {
+    homeTeam: game.homeTeam.teamName,
+    awayTeam: game.awayTeam.teamName,
+    date: new Date(game.start).toLocaleString("fi-FI", {
+      timeZone: "Europe/Helsinki"
+    }),
+    rink: game.iceRink?.name ?? "Unknown",
+    city: game.iceRink?.city ?? "Unknown",
+    address: game.iceRink?.streetAddress ?? "Unknown",
+    tickets: game.buyTicketsUrl ?? "No vendor listed"
+  };
+}
+
+module.exports = {
+  getNextGame,
+  getNextLocalGame
+};
