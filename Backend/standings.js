@@ -1,7 +1,9 @@
 const url = "https://liiga.fi/api/v2/standings?season=2027";
+const normalizeTeamName = require("./utils/normalizeTeamName");
 
 
 async function getStandings(teamName = "hifk") {
+    teamName = normalizeTeamName(teamName);
     try {
         const response = await fetch(url);
 
