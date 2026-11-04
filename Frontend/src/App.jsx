@@ -187,7 +187,7 @@ if (!currentUser) {
 
 <p>{profileMessage}</p>
 
-      <button onClick={getGames}>
+      <button onClick={() => getGames()}>
         Find next game
       </button>
 
