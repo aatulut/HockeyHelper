@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [game, setGame] = useState(null);
@@ -11,6 +11,15 @@ function App() {
   const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const favoriteTeam = currentUser.favoriteTeam || "HIFK";
+
+      setTeam(favoriteTeam);
+      getGames(favoriteTeam);
+    }
+  }, [currentUser]);
 
   async function login() {
   const response = await fetch("http://localhost:3000/api/login", {
@@ -68,20 +77,22 @@ function App() {
   setPassword("");
 }
 
-  async function getGames() {
+  async function getGames(selectedTeam = team) {
   const gameResponse = await fetch(
-    `http://localhost:3000/api/games?team=${team}`
-  );
+      `http://localhost:3000/api/games?team=${selectedTeam}`
+    );
 
-  const gameData = await gameResponse.json();
-  const standingsResponse = await fetch(
-    `http://localhost:3000/api/standings?team=${team}`
-  );
-  const standingsData = await standingsResponse.json();
+    const gameData = await gameResponse.json();
 
-  setGame(gameData);
-  setStandings(standingsData);
-}
+    const standingsResponse = await fetch(
+      `http://localhost:3000/api/standings?team=${selectedTeam}`
+    );
+
+    const standingsData = await standingsResponse.json();
+
+    setGame(gameData);
+    setStandings(standingsData);
+  }
 
 if (!currentUser && showRegister) {
   return (
