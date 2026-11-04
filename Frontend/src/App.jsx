@@ -142,22 +142,29 @@ if (!currentUser) {
     <div>
       <h1>HockeyHelper</h1>
 
-      <input
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-        placeholder="Username"
-      />
+  <form
+    onSubmit={(event) => {
+      event.preventDefault();
+      login();
+    }}
+  >
+    <input
+      value={username}
+      onChange={(event) => setUsername(event.target.value)}
+      placeholder="Username"
+    />
 
-      <input
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        placeholder="Password"
-      />
+    <input
+      type="password"
+      value={password}
+      onChange={(event) => setPassword(event.target.value)}
+      placeholder="Password"
+    />
 
-      <button onClick={login}>
-        Login
-      </button>
+    <button type="submit">
+      Login
+    </button>
+  </form>
 
       <p>No existing account?</p>
 
