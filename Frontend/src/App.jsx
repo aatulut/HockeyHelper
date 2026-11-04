@@ -12,6 +12,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
   const [searchMessage, setSearchMessage] = useState("");
+  const [city, setCity] = useState("");
+  const [localGameMessage, setLocalGameMessage] = useState("");
 
   useEffect(() => {
     if (currentUser) {
@@ -44,6 +46,7 @@ function App() {
   setCurrentUser(data);
   setProfileMessage("");
   setTeam(data.favoriteTeam);
+  setCity(data.homeCity || "");
 }
 
  async function saveProfile() {
@@ -76,6 +79,23 @@ function App() {
   setFavoriteTeam("");
   setHomeCity("");
   setPassword("");
+}
+
+async function getLocalGame() {
+  const response = await fetch(
+    `http://localhost:3000/api/games/local?city=${city}`
+  );
+
+  const data = await response.json();
+  if (data.message) {
+  setLocalGameMessage(data.message);
+  setGame(null);
+  setStandings(null);
+  return;
+}
+  setLocalGameMessage("");
+  setGame(data);
+  setStandings(null);
 }
 
   async function getGames(selectedTeam = team) {
@@ -211,6 +231,24 @@ if (!currentUser) {
       </button>
       </form>
 {searchMessage && <p>{searchMessage}</p>}
+
+<form
+  onSubmit={(event) => {
+    event.preventDefault();
+    getLocalGame();
+  }}
+>
+  <input
+    value={city}
+    onChange={(event) => setCity(event.target.value)}
+    placeholder="Search city"
+  />
+
+  <button type="submit">
+    Find local game
+  </button>
+</form>
+{localGameMessage && <p>{localGameMessage}</p>}
 
 <p>{profileMessage}</p>
 
