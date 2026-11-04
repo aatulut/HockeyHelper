@@ -1,8 +1,9 @@
 
 const url = "https://liiga.fi/api/v2/games?season=2027&tournament=runkosarja";
+const normalizeTeamName = require("./utils/normalizeTeamName");
 
 async function getNextGame(mode = "hifk") {
-    mode = mode.toLowerCase();
+    mode = normalizeTeamName(mode);
     try {
         const response = await fetch(url);
 
