@@ -11,6 +11,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
+  const [searchMessage, setSearchMessage] = useState("");
 
   useEffect(() => {
     if (currentUser) {
@@ -90,6 +91,13 @@ function App() {
 
     const standingsData = await standingsResponse.json();
 
+      if (standingsData.message) {
+    setSearchMessage("Team not found");
+    setGame(null);
+    setStandings(null);
+    return;
+  }
+    setSearchMessage("");
     setGame(gameData);
     setStandings(standingsData);
   }
@@ -186,17 +194,25 @@ if (!currentUser) {
 <p>Favorite team: {currentUser.favoriteTeam}</p>
 <p>Home city: {currentUser.homeCity}</p>
 
+<form
+  onSubmit={(event) => {
+    event.preventDefault();
+    getGames();
+  }}
+>
 <input
   value={team}
   onChange={(event) => setTeam(event.target.value)}
   placeholder="Enter team"
 />
 
-<p>{profileMessage}</p>
-
       <button onClick={() => getGames()}>
         Find next game
       </button>
+      </form>
+{searchMessage && <p>{searchMessage}</p>}
+
+<p>{profileMessage}</p>
 
      {game && (
   <div>
