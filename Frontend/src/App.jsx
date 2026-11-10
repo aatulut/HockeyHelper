@@ -14,6 +14,7 @@ function App() {
   const [searchMessage, setSearchMessage] = useState("");
   const [city, setCity] = useState("");
   const [localGameMessage, setLocalGameMessage] = useState("");
+  const [opponentStandings, setOpponentStandings] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -91,25 +92,25 @@ async function getLocalGame() {
   setLocalGameMessage(data.message);
   setGame(null);
   setStandings(null);
+  setOpponentStandings(null);
   return;
 }
   setLocalGameMessage("");
   setGame(data);
   setStandings(null);
+  setOpponentStandings(null);
 }
 
   async function getGames(selectedTeam = team) {
-  const gameResponse = await fetch(
-      `http://localhost:3000/api/games?team=${selectedTeam}`
-    );
+  const [gameResponse, standingsResponse] = await Promise.all([
+    fetch(`http://localhost:3000/api/games?team=${selectedTeam}`),
+    fetch(`http://localhost:3000/api/standings?team=${selectedTeam}`)
+  ]);
 
-    const gameData = await gameResponse.json();
-
-    const standingsResponse = await fetch(
-      `http://localhost:3000/api/standings?team=${selectedTeam}`
-    );
-
-    const standingsData = await standingsResponse.json();
+  const [gameData, standingsData] = await Promise.all([
+    gameResponse.json(),
+    standingsResponse.json()
+  ]);
 
       if (standingsData.message) {
     setSearchMessage("Team not found");
@@ -117,16 +118,34 @@ async function getLocalGame() {
     setStandings(null);
     return;
   }
+
+  const opponentTeam =
+  gameData.homeTeam === standingsData.teamName
+    ? gameData.awayTeam
+    : gameData.homeTeam;
+
+    const opponentResponse = await fetch(
+  `http://localhost:3000/api/standings?team=${opponentTeam}`
+);
+
+    const opponentData = await opponentResponse.json();
+
     setSearchMessage("");
     setGame(gameData);
     setStandings(standingsData);
+    setGame(gameData);
+    setStandings(standingsData);
+    setOpponentStandings(opponentData);
   }
+
+
 function logout() {
   setCurrentUser(null);
   setGame(null);
   setStandings(null);
   setTeam("");
   setCity("");
+  setOpponentStandings(null);
 }
 
 
@@ -280,18 +299,34 @@ if (!currentUser) {
   </div>
 )}
 {standings && (
-  <div>
-    <h2>{standings.teamName} standings</h2>
+  <div style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
+    <div>
+      <h2>{standings.teamName}</h2>
+      <p>Ranking: {standings.ranking}</p>
+      <p>Games: {standings.games}</p>
+      <p>Wins: {standings.wins}</p>
+      <p>Overtime wins: {standings.overtimeWins}</p>
+      <p>Losses: {standings.losses}</p>
+      <p>Ties: {standings.ties}</p>
+      <p>Points: {standings.points}</p>
+      <p>Goals: {standings.goals}</p>
+      <p>Goals against: {standings.goalsAgainst}</p>
+    </div>
 
-    <p>Ranking: {standings.ranking}</p>
-    <p>Games: {standings.games}</p>
-    <p>Wins: {standings.wins}</p>
-    <p>Overtime wins: {standings.overtimeWins}</p>
-    <p>Losses: {standings.losses}</p>
-    <p>Ties: {standings.ties}</p>
-    <p>Points: {standings.points}</p>
-    <p>Goals: {standings.goals}</p>
-    <p>Goals against: {standings.goalsAgainst}</p>
+    {opponentStandings && (
+      <div>
+        <h2>{opponentStandings.teamName}</h2>
+        <p>Ranking: {opponentStandings.ranking}</p>
+        <p>Games: {opponentStandings.games}</p>
+        <p>Wins: {opponentStandings.wins}</p>
+        <p>Overtime wins: {opponentStandings.overtimeWins}</p>
+        <p>Losses: {opponentStandings.losses}</p>
+        <p>Ties: {opponentStandings.ties}</p>
+        <p>Points: {opponentStandings.points}</p>
+        <p>Goals: {opponentStandings.goals}</p>
+        <p>Goals against: {opponentStandings.goalsAgainst}</p>
+      </div>
+    )}
   </div>
 )}
 
