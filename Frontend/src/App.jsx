@@ -121,6 +121,14 @@ async function getLocalGame() {
     setGame(gameData);
     setStandings(standingsData);
   }
+function logout() {
+  setCurrentUser(null);
+  setGame(null);
+  setStandings(null);
+  setTeam("");
+  setCity("");
+}
+
 
 if (!currentUser && showRegister) {
   return (
@@ -210,6 +218,9 @@ if (!currentUser) {
       <h1>HockeyHelper</h1>
 
 <h2>Welcome {currentUser.username}</h2>
+<button onClick={logout}>
+  Logout
+</button>
 
 <p>Favorite team: {currentUser.favoriteTeam}</p>
 <p>Home city: {currentUser.homeCity}</p>
