@@ -11,9 +11,30 @@ const app = express();
 const PORT = 3000;
 const User = require("./models/Users");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
+const { default: MongoStore } = require("connect-mongo");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true
+  })
+);
 app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI
+    }),
+    cookie: {
+      httpOnly: true
+    }
+  })
+);
 
 app.get("/api/games", async (req, res) => {
   const team = req.query.team || "hifk";
@@ -43,6 +64,21 @@ app.get("/api/standings", async (req, res) => {
   const standings = await getStandings(team);
 
   res.json(standings);
+});
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({
+        message: "Logout failed"
+      });
+    }
+
+    res.clearCookie("connect.sid");
+    res.json({
+      message: "Logged out"
+    });
+  });
 });
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -109,6 +145,30 @@ app.post("/api/login", async (req, res) => {
   if (!passwordMatches) {
     return res.status(401).json({
       message: "Invalid username or password"
+    });
+  }
+
+  req.session.userId = user._id;
+
+  res.json({
+    username: user.username,
+    favoriteTeam: user.favoriteTeam,
+    homeCity: user.homeCity
+  });
+});
+
+app.get("/api/me", async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({
+      message: "Not authenticated"
+    });
+  }
+
+  const user = await User.findById(req.session.userId);
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found"
     });
   }
 

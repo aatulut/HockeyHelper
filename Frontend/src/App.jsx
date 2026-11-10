@@ -25,9 +25,30 @@ function App() {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+  async function checkSession() {
+    const response = await fetch("http://localhost:3000/api/me", {
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+
+    setCurrentUser(data);
+    setTeam(data.favoriteTeam || "HIFK");
+    setCity(data.homeCity || "");
+  }
+
+  checkSession();
+}, []);
+
   async function login() {
   const response = await fetch("http://localhost:3000/api/login", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },
@@ -139,13 +160,18 @@ async function getLocalGame() {
   }
 
 
-function logout() {
+async function logout() {
+  await fetch("http://localhost:3000/api/logout", {
+    method: "POST",
+    credentials: "include"
+  });
+
   setCurrentUser(null);
   setGame(null);
   setStandings(null);
+  setOpponentStandings(null);
   setTeam("");
   setCity("");
-  setOpponentStandings(null);
 }
 
 
