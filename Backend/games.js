@@ -114,7 +114,52 @@ async function getNextLocalGame(city) {
   };
 }
 
+async function getUpcomingGames() {
+  const response = await fetch(url);
+  const games = await response.json();
+
+  const now = new Date();
+
+  // Monday 00:00
+  const startOfWeek = new Date(now);
+  const day = startOfWeek.getDay();
+
+  const daysSinceMonday = day === 0 ? 6 : day - 1;
+
+  startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  // Next Monday 00:00
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 7);
+
+  const upcomingGames = games
+    .filter((game) => {
+      const gameStart = new Date(game.start);
+
+      return (
+        gameStart >= startOfWeek &&
+        gameStart < endOfWeek &&
+        gameStart > now &&
+        !game.ended
+      );
+    })
+    .sort(
+      (a, b) => new Date(a.start) - new Date(b.start)
+    );
+
+  return upcomingGames.map((game) => ({
+    gameId: game.id,
+    homeTeam: game.homeTeam.teamName,
+    awayTeam: game.awayTeam.teamName,
+    gameStart: game.start,
+    rink: game.iceRink?.name ?? "Unknown",
+    city: game.iceRink?.city ?? "Unknown"
+  }));
+}
+
 module.exports = {
   getNextGame,
-  getNextLocalGame
+  getNextLocalGame,
+  getUpcomingGames
 };
