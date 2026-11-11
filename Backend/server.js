@@ -13,6 +13,7 @@ const User = require("./models/Users");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const { default: MongoStore } = require("connect-mongo");
+const Prediction = require("./models/Prediction");
 
 app.use(
   cors({
@@ -64,6 +65,41 @@ app.get("/api/standings", async (req, res) => {
   const standings = await getStandings(team);
 
   res.json(standings);
+});
+
+app.post("/api/predictions", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Not authenticated"
+      });
+    }
+
+    const prediction = new Prediction({
+      userId,
+      gameId: req.body.gameId,
+      homeTeam: req.body.homeTeam,
+      awayTeam: req.body.awayTeam,
+      predictedWinner: req.body.predictedWinner,
+      gameStart: req.body.gameStart
+    });
+
+    const savedPrediction = await prediction.save();
+
+    res.status(201).json(savedPrediction);
+  } catch (error) {
+  if (error.code === 11000) {
+    return res.status(409).json({
+      message: "You have already set a prediction to this game"
+    });
+  }
+
+  res.status(400).json({
+    message: error.message
+  });
+}
 });
 
 app.post("/api/logout", (req, res) => {
