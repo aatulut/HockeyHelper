@@ -1,7 +1,8 @@
 const getStandings = require("./standings");
 const {
   getNextGame,
-  getNextLocalGame
+  getNextLocalGame,
+  getUpcomingGames
 } = require("./games");
 const express = require("express");
 const cors = require("cors");
@@ -65,6 +66,17 @@ app.get("/api/standings", async (req, res) => {
   const standings = await getStandings(team);
 
   res.json(standings);
+});
+
+app.get("/api/games/upcoming", async (req, res) => {
+  try {
+    const games = await getUpcomingGames();
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch upcoming games"
+    });
+  }
 });
 
 app.post("/api/predictions", async (req, res) => {
