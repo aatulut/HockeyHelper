@@ -15,6 +15,7 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const { default: MongoStore } = require("connect-mongo");
 const Prediction = require("./models/Prediction");
+const settleFinishedPredictions = require("./utils/settleFinishedPredictions");
 
 app.use(
   cors({

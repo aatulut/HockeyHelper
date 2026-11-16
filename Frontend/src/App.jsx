@@ -238,7 +238,7 @@ async function submitPrediction(game) {
 
 setConfirmedPredictions((previous) => ({
   ...previous,
-  [game.gameId]: selectedPrediction.predictedWinner
+  [game.gameId]: data
 }));
 
 setSelectedPrediction(null);
@@ -262,8 +262,7 @@ async function getUserPredictions() {
   const predictionsByGame = {};
 
   data.forEach((prediction) => {
-    predictionsByGame[prediction.gameId] =
-      prediction.predictedWinner;
+    predictionsByGame[prediction.gameId] = prediction;
   });
 
   setConfirmedPredictions(predictionsByGame);
@@ -514,9 +513,28 @@ if (!currentUser) {
     <p>{game.city}</p>
 
     {confirmedPredictions[game.gameId] ? (
+  <div>
   <p>
-    You predicted {confirmedPredictions[game.gameId]}
+    You predicted {confirmedPredictions[game.gameId].predictedWinner}
   </p>
+
+   {confirmedPredictions[game.gameId].settled && (
+      <>
+        <p>
+          Winner: {
+            confirmedPredictions[game.gameId].actualWinner
+          }
+        </p>
+
+        <p>
+          Points: {
+            confirmedPredictions[game.gameId].points
+          }
+        </p>
+      </>
+    )}
+  </div>
+
 ) : (
   <>
     <div>
