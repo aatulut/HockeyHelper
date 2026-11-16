@@ -230,3 +230,23 @@ app.get("/api/me", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+app.get("/api/predictions", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Not authenticated"
+      });
+    }
+
+    const predictions = await Prediction.find({ userId });
+
+    res.json(predictions);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch predictions"
+    });
+  }
+});

@@ -18,6 +18,9 @@ function App() {
   const [page, setPage] = useState(
   localStorage.getItem("page") || "home"
 );
+  const [upcomingGames, setUpcomingGames] = useState([]);
+  const [selectedPrediction, setSelectedPrediction] = useState(null);
+  const [confirmedPredictions, setConfirmedPredictions] = useState({});
 
   useEffect(() => {
     if (currentUser) {
@@ -76,6 +79,8 @@ function App() {
   setProfileMessage("");
   setTeam(data.favoriteTeam);
   setCity(data.homeCity || "");
+  setPage("home");
+  localStorage.setItem("page", "home");
 }
 
  async function saveProfile() {
@@ -181,6 +186,87 @@ async function logout() {
   setCity("");
   setPage("home");
   localStorage.setItem("page", "home");
+}
+
+async function getUpcomingGames() {
+  const response = await fetch(
+    "http://localhost:3000/api/games/upcoming",
+    {
+      credentials: "include"
+    }
+  );
+
+  const data = await response.json();
+
+  setUpcomingGames(data);
+}
+
+useEffect(() => {
+  if (currentUser && page === "predictions") {
+    getUpcomingGames();
+    getUserPredictions();
+  }
+}, [page, currentUser]);
+
+async function submitPrediction(game) {
+  const response = await fetch(
+    "http://localhost:3000/api/predictions",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        gameId: game.gameId,
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        predictedWinner: selectedPrediction.predictedWinner,
+        gameStart: game.gameStart
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  console.log(data);
+
+  if (!response.ok) {
+  console.log(data);
+  return;
+}
+
+setConfirmedPredictions((previous) => ({
+  ...previous,
+  [game.gameId]: selectedPrediction.predictedWinner
+}));
+
+setSelectedPrediction(null);
+
+}
+
+async function getUserPredictions() {
+  const response = await fetch(
+    "http://localhost:3000/api/predictions",
+    {
+      credentials: "include"
+    }
+  );
+
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+
+  const predictionsByGame = {};
+
+  data.forEach((prediction) => {
+    predictionsByGame[prediction.gameId] =
+      prediction.predictedWinner;
+  });
+
+  setConfirmedPredictions(predictionsByGame);
 }
 
 {/*create account page*/}
@@ -409,11 +495,75 @@ if (!currentUser) {
     {page === "predictions" && (
       <div>
         <h2>Predictions</h2>
-        <p>This week's games placeholder</p>
+        {upcomingGames.length === 0 ? (
+      <p>No upcoming games this week.</p>
+    ) : (
+      upcomingGames.map((game) => (
+  <div key={game.gameId}>
+    <h3>
+      {game.homeTeam} - {game.awayTeam}
+    </h3>
+
+    <p>
+      {new Date(game.gameStart).toLocaleString("fi-FI", {
+        timeZone: "Europe/Helsinki"
+      })}
+    </p>
+
+    <p>{game.rink}</p>
+    <p>{game.city}</p>
+
+    {confirmedPredictions[game.gameId] ? (
+  <p>
+    You predicted {confirmedPredictions[game.gameId]}
+  </p>
+) : (
+  <>
+    <div>
+      <button
+        onClick={() =>
+          setSelectedPrediction({
+            gameId: game.gameId,
+            predictedWinner: game.homeTeam
+          })
+        }
+      >
+        {game.homeTeam}
+      </button>
+
+      <button
+        onClick={() =>
+          setSelectedPrediction({
+            gameId: game.gameId,
+            predictedWinner: game.awayTeam
+          })
+        }
+      >
+        {game.awayTeam}
+      </button>
+    </div>
+
+    {selectedPrediction?.gameId === game.gameId && (
+      <div>
+        <p>You picked {selectedPrediction.predictedWinner}</p>
+        <p>Are you sure?</p>
+
+        <button onClick={() => submitPrediction(game)}>
+          Confirm
+        </button>
+
+        <button onClick={() => setSelectedPrediction(null)}>
+          Cancel
+        </button>
       </div>
     )}
-
-
+  </>
+)}
+  </div>
+))
+)}
+      </div>
+    )}
     {/*leaderboard page*/}
 
     {page === "leaderboard" && (
