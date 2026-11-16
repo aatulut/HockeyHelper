@@ -27,6 +27,11 @@ const predictionSchema = new mongoose.Schema({
     required: true
   },
 
+  actualWinner: {
+  type: String,
+  default: null
+},
+
   gameStart: {
     type: Date,
     required: true
