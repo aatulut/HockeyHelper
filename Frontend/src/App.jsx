@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+import Navigation from "./components/Navigation";
+import Leaderboard from "./components/Leaderboard";
+import Predictions from "./components/Predictions";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
   const [game, setGame] = useState(null);
@@ -87,6 +93,7 @@ function App() {
  async function saveProfile() {
   const response = await fetch("http://localhost:3000/api/users", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },
@@ -108,7 +115,7 @@ function App() {
   setCurrentUser(data);
   setTeam(data.favoriteTeam);
 
-  setProfileMessage("Profile saved");
+  setProfileMessage("");
 
   setUsername("");
   setFavoriteTeam("");
@@ -167,8 +174,6 @@ async function getLocalGame() {
     setSearchMessage("");
     setGame(gameData);
     setStandings(standingsData);
-    setGame(gameData);
-    setStandings(standingsData);
     setOpponentStandings(opponentData);
   }
 
@@ -203,11 +208,16 @@ async function getUpcomingGames() {
 }
 
 useEffect(() => {
-  if (currentUser && page === "predictions") {
+  if (!currentUser) {
+    return;
+  }
+
+  if (page === "predictions") {
     getUpcomingGames();
     getUserPredictions();
   }
-    if (page === "leaderboard") {
+
+  if (page === "leaderboard") {
     getLeaderboard();
   }
 }, [page, currentUser]);
@@ -289,88 +299,37 @@ async function getLeaderboard() {
   setLeaderboard(data);
 }
 
-{/*create account page*/}
+{/*Register*/}
 if (!currentUser && showRegister) {
   return (
-    <div>
-      <h1>Create account</h1>
-
-      <input
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-        placeholder="Username"
-      />
-
-      <input
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        placeholder="Password"
-      />
-
-      <input
-        value={favoriteTeam}
-        onChange={(event) => setFavoriteTeam(event.target.value)}
-        placeholder="Favorite team"
-      />
-
-      <input
-        value={homeCity}
-        onChange={(event) => setHomeCity(event.target.value)}
-        placeholder="Home city"
-      />
-
-      <button onClick={saveProfile}>
-        Create account
-      </button>
-
-      <button onClick={() => setShowRegister(false)}>
-        Back to login
-      </button>
-
-      <p>{profileMessage}</p>
-    </div>
+    <Register
+      username={username}
+      setUsername={setUsername}
+      password={password}
+      setPassword={setPassword}
+      favoriteTeam={favoriteTeam}
+      setFavoriteTeam={setFavoriteTeam}
+      homeCity={homeCity}
+      setHomeCity={setHomeCity}
+      saveProfile={saveProfile}
+      setShowRegister={setShowRegister}
+      profileMessage={profileMessage}
+    />
   );
 }
 
-{/*frontpage*/}
+{/*login*/}
 if (!currentUser) {
   return (
-    <div>
-      <h1>HockeyHelper</h1>
-
-  <form
-    onSubmit={(event) => {
-      event.preventDefault();
-      login();
-    }}
-  >
-    <input
-      value={username}
-      onChange={(event) => setUsername(event.target.value)}
-      placeholder="Username"
+    <Login
+      username={username}
+      setUsername={setUsername}
+      password={password}
+      setPassword={setPassword}
+      login={login}
+      setShowRegister={setShowRegister}
+      profileMessage={profileMessage}
     />
-
-    <input
-      type="password"
-      value={password}
-      onChange={(event) => setPassword(event.target.value)}
-      placeholder="Password"
-    />
-
-    <button type="submit">
-      Login
-    </button>
-  </form>
-
-      <p>No existing account?</p>
-
-      <button onClick={() => setShowRegister(true)}>
-        Register
-      </button>
-
-      <p>{profileMessage}</p>
-    </div>
   );
 }
 
@@ -379,248 +338,45 @@ if (!currentUser) {
   <div>
     <h1>HockeyHelper</h1>
 
-    <nav>
-      <button onClick={() => setPage("home")}>
-        Home
-      </button>
-
-      <button onClick={() => setPage("predictions")}>
-        Predictions
-      </button>
-
-      <button onClick={() => setPage("leaderboard")}>
-        Leaderboard
-      </button>
-    </nav>
-
-    <button onClick={logout}>
-      Logout
-    </button>
+  <Navigation
+    setPage={setPage}
+    logout={logout}
+  />
 
 
     {/*homepage*/}
-
-    {page === "home" && (
-      <>
-        <p>Favorite team: {currentUser.favoriteTeam}</p>
-        <p>Home city: {currentUser.homeCity}</p>
-
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            getGames();
-          }}
-        >
-          <input
-            value={team}
-            onChange={(event) => setTeam(event.target.value)}
-            placeholder="Enter team"
-          />
-
-          <button type="submit">
-            Find next game
-          </button>
-        </form>
-
-        {searchMessage && <p>{searchMessage}</p>}
-
-
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            getLocalGame();
-          }}
-        >
-          <input
-            value={city}
-            onChange={(event) => setCity(event.target.value)}
-            placeholder="Search city"
-          />
-
-          <button type="submit">
-            Find local game
-          </button>
-        </form>
-
-        {localGameMessage && <p>{localGameMessage}</p>}
-
-        <p>{profileMessage}</p>
-
-
-        {game && (
-          <div>
-            <h2>
-              {game.homeTeam} - {game.awayTeam}
-            </h2>
-
-            <p>{game.date}</p>
-            <p>{game.rink}</p>
-            <p>{game.city}</p>
-            <p>{game.address}</p>
-
-            <a href={game.tickets} target="_blank">
-              Tickets
-            </a>
-          </div>
-        )}
-
-
-        {standings && (
-          <div
-            style={{
-              display: "flex",
-              gap: "40px",
-              justifyContent: "center"
-            }}
-          >
-            <div>
-              <h2>{standings.teamName}</h2>
-              <p>Ranking: {standings.ranking}</p>
-              <p>Games: {standings.games}</p>
-              <p>Wins: {standings.wins}</p>
-              <p>Overtime wins: {standings.overtimeWins}</p>
-              <p>Losses: {standings.losses}</p>
-              <p>Ties: {standings.ties}</p>
-              <p>Points: {standings.points}</p>
-              <p>Goals: {standings.goals}</p>
-              <p>Goals against: {standings.goalsAgainst}</p>
-            </div>
-
-            {opponentStandings && (
-              <div>
-                <h2>{opponentStandings.teamName}</h2>
-                <p>Ranking: {opponentStandings.ranking}</p>
-                <p>Games: {opponentStandings.games}</p>
-                <p>Wins: {opponentStandings.wins}</p>
-                <p>
-                  Overtime wins: {opponentStandings.overtimeWins}
-                </p>
-                <p>Losses: {opponentStandings.losses}</p>
-                <p>Ties: {opponentStandings.ties}</p>
-                <p>Points: {opponentStandings.points}</p>
-                <p>Goals: {opponentStandings.goals}</p>
-                <p>
-                  Goals against: {opponentStandings.goalsAgainst}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-      </>
-    )}
-
+  {page === "home" && (
+     <Home
+    currentUser={currentUser}
+    team={team}
+    setTeam={setTeam}
+    city={city}
+    setCity={setCity}
+    getGames={getGames}
+    getLocalGame={getLocalGame}
+    searchMessage={searchMessage}
+    localGameMessage={localGameMessage}
+    profileMessage={profileMessage}
+    game={game}
+    standings={standings}
+    opponentStandings={opponentStandings}
+  />
+)}
 
     {/*prediction page*/}
-
-    {page === "predictions" && (
-      <div>
-        <h2>Predictions</h2>
-        {upcomingGames.length === 0 ? (
-      <p>No upcoming games this week.</p>
-    ) : (
-      upcomingGames.map((game) => (
-  <div key={game.gameId}>
-    <h3>
-      {game.homeTeam} - {game.awayTeam}
-    </h3>
-
-    <p>
-      {new Date(game.gameStart).toLocaleString("fi-FI", {
-        timeZone: "Europe/Helsinki"
-      })}
-    </p>
-
-    <p>{game.rink}</p>
-    <p>{game.city}</p>
-
-    {confirmedPredictions[game.gameId] ? (
-  <div>
-  <p>
-    You predicted {confirmedPredictions[game.gameId].predictedWinner}
-  </p>
-
-   {confirmedPredictions[game.gameId].settled && (
-      <>
-        <p>
-          Winner: {
-            confirmedPredictions[game.gameId].actualWinner
-          }
-        </p>
-
-        <p>
-          Points: {
-            confirmedPredictions[game.gameId].points
-          }
-        </p>
-      </>
-    )}
-  </div>
-
-) : (
-  <>
-    <div>
-      <button
-        onClick={() =>
-          setSelectedPrediction({
-            gameId: game.gameId,
-            predictedWinner: game.homeTeam
-          })
-        }
-      >
-        {game.homeTeam}
-      </button>
-
-      <button
-        onClick={() =>
-          setSelectedPrediction({
-            gameId: game.gameId,
-            predictedWinner: game.awayTeam
-          })
-        }
-      >
-        {game.awayTeam}
-      </button>
-    </div>
-
-    {selectedPrediction?.gameId === game.gameId && (
-      <div>
-        <p>You picked {selectedPrediction.predictedWinner}</p>
-        <p>Are you sure?</p>
-
-        <button onClick={() => submitPrediction(game)}>
-          Confirm
-        </button>
-
-        <button onClick={() => setSelectedPrediction(null)}>
-          Cancel
-        </button>
-      </div>
-    )}
-  </>
+  {page === "predictions" && (
+        <Predictions
+    upcomingGames={upcomingGames}
+    confirmedPredictions={confirmedPredictions}
+    selectedPrediction={selectedPrediction}
+    setSelectedPrediction={setSelectedPrediction}
+    submitPrediction={submitPrediction}
+  />
 )}
-  </div>
-))
-)}
-      </div>
-    )}
 
     {/*leaderboard page*/}
 {page === "leaderboard" && (
-    <div>
-      <h2>TOP 10 Standings</h2>
-
-      {leaderboard.length === 0 ? (
-        <p>No scores yet.</p>
-      ) : (
-        leaderboard.map((player, index) => (
-          <div key={player.username}>
-            <p>
-              {index + 1}. {player.username} - {player.points} pts
-            </p>
-          </div>
-        ))
-      )}
-    </div>
+  <Leaderboard leaderboard={leaderboard} />
 )}
   </div>
 );
