@@ -21,6 +21,7 @@ function App() {
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
   const [confirmedPredictions, setConfirmedPredictions] = useState({});
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -206,6 +207,9 @@ useEffect(() => {
     getUpcomingGames();
     getUserPredictions();
   }
+    if (page === "leaderboard") {
+    getLeaderboard();
+  }
 }, [page, currentUser]);
 
 async function submitPrediction(game) {
@@ -266,6 +270,23 @@ async function getUserPredictions() {
   });
 
   setConfirmedPredictions(predictionsByGame);
+}
+
+async function getLeaderboard() {
+  const response = await fetch(
+    "http://localhost:3000/api/leaderboard",
+    {
+      credentials: "include"
+    }
+  );
+
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+
+  setLeaderboard(data);
 }
 
 {/*create account page*/}
@@ -582,14 +603,25 @@ if (!currentUser) {
 )}
       </div>
     )}
-    {/*leaderboard page*/}
 
-    {page === "leaderboard" && (
-      <div>
-        <h2>Leaderboard</h2>
-        <p>Leaderboard placeholder</p>
-      </div>
-    )}
+    {/*leaderboard page*/}
+{page === "leaderboard" && (
+    <div>
+      <h2>TOP 10 Standings</h2>
+
+      {leaderboard.length === 0 ? (
+        <p>No scores yet.</p>
+      ) : (
+        leaderboard.map((player, index) => (
+          <div key={player.username}>
+            <p>
+              {index + 1}. {player.username} - {player.points} pts
+            </p>
+          </div>
+        ))
+      )}
+    </div>
+)}
   </div>
 );
 }
