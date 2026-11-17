@@ -158,6 +158,8 @@ app.post("/api/users", async (req, res) => {
   });
 
   const savedUser = await user.save();
+  
+  req.session.userId = savedUser._id;
 
   res.status(201).json({
   username: savedUser.username,
