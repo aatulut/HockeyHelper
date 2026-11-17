@@ -242,12 +242,59 @@ app.get("/api/predictions", async (req, res) => {
       });
     }
 
+    await settleFinishedPredictions();
     const predictions = await Prediction.find({ userId });
 
     res.json(predictions);
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch predictions"
+    });
+  }
+});
+
+app.get("/api/leaderboard", async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({
+        message: "Not authenticated"
+      });
+    }
+
+    await settleFinishedPredictions();
+
+    const scores = await Prediction.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          points: { $sum: "$points" }
+        }
+      },
+      {
+        $sort: {
+          points: -1
+        }
+      },
+      {
+      $limit: 10
+    }
+    ]);
+
+    const leaderboard = await Promise.all(
+      scores.map(async (score) => {
+        const user = await User.findById(score._id);
+
+        return {
+          username: user?.username ?? "Unknown",
+          points: score.points
+        };
+      })
+    );
+
+    res.json(leaderboard);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch leaderboard"
     });
   }
 });
