@@ -5,6 +5,7 @@ import Predictions from "./components/Predictions";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import "./App.css";
 
 function App() {
   const [game, setGame] = useState(null);
@@ -335,10 +336,10 @@ if (!currentUser) {
 
 {/*logged in user*/}
   return (
-  <div>
-    <h1>HockeyHelper</h1>
+  <div className="app">
 
   <Navigation
+    page={page}
     setPage={setPage}
     logout={logout}
   />
