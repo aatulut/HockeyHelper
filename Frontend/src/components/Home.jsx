@@ -14,14 +14,33 @@ function Home({
   opponentStandings
 }) {
   return (
-    <>
-      <p>Favorite team: {currentUser.favoriteTeam}</p>
-      <p>Home city: {currentUser.homeCity}</p>
+    <div className="home">
+
+        <div className="profile-summary">
+        <div>
+            <span>Username</span>
+            <strong>{currentUser.username}</strong>
+        </div>
+
+        <div>
+            <span>Favorite team</span>
+            <strong>{currentUser.favoriteTeam}</strong>
+        </div>
+
+        <div>
+            <span>Home city</span>
+            <strong>{currentUser.homeCity}</strong>
+        </div>
+        </div>
+
+<div className="search-section">
 
       <form
+        className="search-row"
         onSubmit={(event) => {
           event.preventDefault();
           getGames();
+          setCity("");
         }}
       >
         <input
@@ -38,9 +57,11 @@ function Home({
       {searchMessage && <p>{searchMessage}</p>}
 
       <form
+        className="search-row"
         onSubmit={(event) => {
           event.preventDefault();
           getLocalGame();
+          setTeam("");
         }}
       >
         <input
@@ -53,36 +74,40 @@ function Home({
           Find local game
         </button>
       </form>
+      </div>
 
       {localGameMessage && <p>{localGameMessage}</p>}
       <p>{profileMessage}</p>
 
       {game && (
-        <div>
-          <h2>
+       <div className="game-card">
+    <p className="card-label">Next game</p>
+
+          <h2 className="game-teams">
             {game.homeTeam} - {game.awayTeam}
           </h2>
 
+        <div className="game-details">
           <p>{game.date}</p>
           <p>{game.rink}</p>
           <p>{game.city}</p>
           <p>{game.address}</p>
+        </div>
 
-          <a href={game.tickets} target="_blank">
+         <a
+        className="ticket-button"
+        href={game.tickets}
+        target="_blank"
+        rel="noreferrer"
+        >
             Tickets
           </a>
         </div>
       )}
 
       {standings && (
-        <div
-          style={{
-            display: "flex",
-            gap: "40px",
-            justifyContent: "center"
-          }}
-        >
-          <div>
+        <div className="standings-grid">
+          <div className="standings-card">
             <h2>{standings.teamName}</h2>
             <p>Ranking: {standings.ranking}</p>
             <p>Games: {standings.games}</p>
@@ -96,7 +121,7 @@ function Home({
           </div>
 
           {opponentStandings && (
-            <div>
+            <div className="standings-card">
               <h2>{opponentStandings.teamName}</h2>
               <p>Ranking: {opponentStandings.ranking}</p>
               <p>Games: {opponentStandings.games}</p>
@@ -111,7 +136,7 @@ function Home({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 

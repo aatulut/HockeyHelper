@@ -1,24 +1,41 @@
-function Navigation({ setPage, logout }) {
+import liigaHelperLogo from "../assets/liigahelper.png";
+
+function Navigation({ page, setPage, logout }) {
   return (
-    <>
-      <nav>
-        <button onClick={() => setPage("home")}>
+    <header className="app-header">
+      <img
+        className="app-logo"
+        src={liigaHelperLogo}
+        alt="Liiga Helper"
+        />
+
+      <nav className="nav-links">
+        <button
+          className={page === "home" ? "active" : ""}
+          onClick={() => setPage("home")}
+        >
           Home
         </button>
 
-        <button onClick={() => setPage("predictions")}>
+        <button
+          className={page === "predictions" ? "active" : ""}
+          onClick={() => setPage("predictions")}
+        >
           Predictions
         </button>
 
-        <button onClick={() => setPage("leaderboard")}>
+        <button
+          className={page === "leaderboard" ? "active" : ""}
+          onClick={() => setPage("leaderboard")}
+        >
           Leaderboard
         </button>
       </nav>
 
-      <button onClick={logout}>
+      <button className="logout-button" onClick={logout}>
         Logout
       </button>
-    </>
+    </header>
   );
 }
 
