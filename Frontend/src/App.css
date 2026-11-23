@@ -377,3 +377,64 @@ body {
   background: #1f2937;
   color: white;
 }
+
+/* ################ LEADERBOARD ################ */
+.leaderboard-card {
+  max-width: 650px;
+  margin: 32px auto;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.leaderboard-card h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.leaderboard-header,
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 100px;
+  align-items: center;
+  padding: 12px 8px;
+}
+
+.leaderboard-header {
+  color: #6b7280;
+  font-size: 13px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.leaderboard-row {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-row strong,
+.leaderboard-header span:last-child {
+  text-align: right;
+}
+
+.first-place {
+  background: #fff4c2;
+  border-left: 5px solid #d4af37;
+  font-weight: 700;
+}
+
+.second-place {
+  background: #f3f4f6;
+  border-left: 5px solid #a8a9ad;
+  font-weight: 700;
+}
+
+.third-place {
+  background: #f6e3d3;
+  border-left: 5px solid #cd7f32;
+  font-weight: 700;
+}
