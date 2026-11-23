@@ -247,3 +247,133 @@ body {
 .ticket-button:hover {
   background-color: #d1d5db;
 }
+
+/* ################ PREDICTIONS CARDS ################ */
+.predictions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.prediction-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.prediction-card button {
+  margin: 4px;
+}
+
+@media (max-width: 900px) {
+  .predictions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .predictions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.confirmed-prediction {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f3f4f6;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.confirmed-prediction span {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.confirmed-prediction strong {
+  font-size: 18px;
+  color: #1f2937;
+}
+
+.prediction-result {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 12px;
+}
+
+.prediction-result div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prediction-result span {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.prediction-result strong {
+  font-size: 18px;
+  color: #1f2937;
+}
+
+/* ################ PREDICTIONS BUTTONS ################ */
+.prediction-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.prediction-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #e5e7eb;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.prediction-buttons button:hover {
+  background: #d1d5db;
+}
+
+.prediction-confirmation {
+  margin-top: 16px;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.confirmation-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confirmation-buttons button:first-child {
+  background: #1f2937;
+  color: white;
+}
+
+.confirmation-buttons button:last-child {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.prediction-buttons button.selected {
+  background: #1f2937;
+  color: white;
+}

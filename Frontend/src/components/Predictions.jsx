@@ -12,8 +12,10 @@ function Predictions({
       {upcomingGames.length === 0 ? (
         <p>No upcoming games this week.</p>
       ) : (
-        upcomingGames.map((game) => (
-          <div key={game.gameId}>
+
+    <div className="predictions-grid">
+    {upcomingGames.map((game) => (
+        <div className="prediction-card" key={game.gameId}>
             <h3>
               {game.homeTeam} - {game.awayTeam}
             </h3>
@@ -28,54 +30,71 @@ function Predictions({
             <p>{game.city}</p>
 
             {confirmedPredictions[game.gameId] ? (
-              <div>
-                <p>
-                  You predicted{" "}
-                  {confirmedPredictions[game.gameId].predictedWinner}
-                </p>
+            <div className="confirmed-prediction">
+                <span>You picked</span>
+
+                <strong>
+                {confirmedPredictions[game.gameId].predictedWinner}
+                </strong>
 
                 {confirmedPredictions[game.gameId].settled && (
-                  <>
-                    <p>
-                      Winner:{" "}
-                      {confirmedPredictions[game.gameId].actualWinner}
-                    </p>
+        <div className="prediction-result">
+            <div>
+            <span>Winner</span>
+            <strong>
+                {confirmedPredictions[game.gameId].actualWinner}
+            </strong>
+            </div>
 
-                    <p>
-                      Points:{" "}
-                      {confirmedPredictions[game.gameId].points}
-                    </p>
-                  </>
-                )}
-              </div>
+            <div>
+            <span>Points</span>
+            <strong>
+                {confirmedPredictions[game.gameId].points}
+            </strong>
+            </div>
+        </div>
+        )}
+          </div> 
             ) : (
               <>
-                <div>
-                  <button
+                <div className="prediction-buttons">
+                    <button
+                    className={
+                        selectedPrediction?.gameId === game.gameId &&
+                        selectedPrediction?.predictedWinner === game.homeTeam
+                        ? "selected"
+                        : ""
+                    }
                     onClick={() =>
-                      setSelectedPrediction({
+                        setSelectedPrediction({
                         gameId: game.gameId,
                         predictedWinner: game.homeTeam
-                      })
+                        })
                     }
-                  >
+                    >
                     {game.homeTeam}
-                  </button>
+                    </button>
 
-                  <button
+                    <button
+                    className={
+                        selectedPrediction?.gameId === game.gameId &&
+                        selectedPrediction?.predictedWinner === game.awayTeam
+                        ? "selected"
+                        : ""
+                    }
                     onClick={() =>
-                      setSelectedPrediction({
+                        setSelectedPrediction({
                         gameId: game.gameId,
                         predictedWinner: game.awayTeam
-                      })
+                        })
                     }
-                  >
+                    >
                     {game.awayTeam}
-                  </button>
+                    </button>
                 </div>
 
                 {selectedPrediction?.gameId === game.gameId && (
-                  <div>
+                  <div className="prediction-confirmation">
                     <p>
                       You picked {selectedPrediction.predictedWinner}
                     </p>
@@ -94,10 +113,11 @@ function Predictions({
                   </div>
                 )}
               </>
-            )}
-          </div>
-        ))
-      )}
+        )}
+      </div>
+    ))}
+  </div>
+)}
     </div>
   );
 }
