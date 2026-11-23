@@ -1,3 +1,5 @@
+import liigahelper from "../assets/liigahelper.png";
+
 function Login({
   username,
   setUsername,
@@ -8,10 +10,17 @@ function Login({
   profileMessage
 }) {
   return (
-    <div>
-      <h1>HockeyHelper</h1>
+    <div className="auth-page">
+      <div className="auth-card">
+        <img
+  className="auth-logo"
+  src={liigahelper}
+  alt="Liiga Helper"
+/>
+        <h2>Sign in</h2>
 
       <form
+        className="auth-form"
         onSubmit={(event) => {
           event.preventDefault();
           login();
@@ -35,13 +44,19 @@ function Login({
         </button>
       </form>
 
-      <p>No existing account?</p>
+      <p className="auth-text">No existing account?</p>
 
-      <button onClick={() => setShowRegister(true)}>
+      <button
+       className="secondary-button"
+       onClick={() => setShowRegister(true)}
+       >
         Register
       </button>
 
-      <p>{profileMessage}</p>
+        {profileMessage && (
+          <p className="auth-message">{profileMessage}</p>
+        )}
+      </div>
     </div>
   );
 }
