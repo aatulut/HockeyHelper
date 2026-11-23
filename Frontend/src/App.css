@@ -438,3 +438,73 @@ body {
   border-left: 5px solid #cd7f32;
   font-weight: 700;
 }
+
+/* ################ LOGIN ################ */
+.auth-page {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.auth-logo {
+  width: 220px;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.auth-card h2 {
+  margin-bottom: 24px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.auth-form button,
+.secondary-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.auth-form button {
+  background: #1f2937;
+  color: white;
+}
+
+.secondary-button {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.auth-text {
+  margin: 24px 0 8px;
+}
+
+.auth-message {
+  margin-top: 16px;
+}

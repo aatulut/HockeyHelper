@@ -185,6 +185,7 @@ async function logout() {
     credentials: "include"
   });
 
+  setShowRegister(false);
   setCurrentUser(null);
   setGame(null);
   setStandings(null);
