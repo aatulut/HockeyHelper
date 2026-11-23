@@ -28,7 +28,7 @@ function App() {
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
   const [confirmedPredictions, setConfirmedPredictions] = useState({});
-  const [leaderboard, setLeaderboard] = useState([]);
+const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     if (currentUser) {

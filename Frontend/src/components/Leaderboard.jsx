@@ -1,19 +1,32 @@
 function Leaderboard({ leaderboard }) {
   return (
-    <div>
+    <div className="leaderboard-card">
       <h2>TOP 10 Standings</h2>
 
-      {leaderboard.length === 0 ? (
-        <p>No scores yet.</p>
-      ) : (
-        leaderboard.map((player, index) => (
-          <div key={player.username}>
-            <p>
-              {index + 1}. {player.username} - {player.points} pts
-            </p>
-          </div>
-        ))
-      )}
+      <div className="leaderboard-header">
+        <span>Placement</span>
+        <span>User</span>
+        <span>Score</span>
+      </div>
+
+      {leaderboard.map((user, index) => (
+        <div
+  className={`leaderboard-row ${
+    index === 0
+            ? "first-place"
+            : index === 1
+            ? "second-place"
+            : index === 2
+            ? "third-place"
+            : ""
+        }`}
+        key={user.username}
+        >
+          <span>{index + 1}</span>
+          <span>{user.username}</span>
+          <strong>{user.points}</strong>
+        </div>
+      ))}
     </div>
   );
 }
