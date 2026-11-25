@@ -139,9 +139,7 @@ async function getUpcomingGames() {
 
       return (
         gameStart >= startOfWeek &&
-        gameStart < endOfWeek &&
-        gameStart > now &&
-        !game.ended
+        gameStart < endOfWeek
       );
     })
     .sort(
@@ -154,7 +152,11 @@ async function getUpcomingGames() {
     awayTeam: game.awayTeam.teamName,
     gameStart: game.start,
     rink: game.iceRink?.name ?? "Unknown",
-    city: game.iceRink?.city ?? "Unknown"
+    city: game.iceRink?.city ?? "Unknown",
+
+    ended: game.ended,
+    homeGoals: game.homeTeam.goals,
+    awayGoals: game.awayTeam.goals
   }));
 }
 
