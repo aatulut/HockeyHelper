@@ -54,7 +54,9 @@ function Home({
         </button>
       </form>
 
-      {searchMessage && <p>{searchMessage}</p>}
+      {searchMessage && (
+  <p className="error-message">{searchMessage}</p>
+    )}
 
       <form
         className="search-row"
@@ -76,7 +78,10 @@ function Home({
       </form>
       </div>
 
-      {localGameMessage && <p>{localGameMessage}</p>}
+      {localGameMessage && (
+  <p className="error-message">{localGameMessage}</p>
+    )}
+    
       <p>{profileMessage}</p>
 
       {game && (

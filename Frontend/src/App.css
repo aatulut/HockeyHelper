@@ -505,10 +505,6 @@ body {
   margin: 24px 0 8px;
 }
 
-.auth-message {
-  margin-top: 16px;
-}
-
 /* ################ GAME OVER / ONGOING LOGIC ################ */
 
 .prediction-closed {
@@ -532,4 +528,17 @@ body {
 .prediction-closed span {
   color: #6b7280;
   font-size: 14px;
+}
+
+/* ################ ERROR MESSAGE ################ */
+
+.error-message {
+  max-width: 420px;
+  margin: 8px auto 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 14px;
+  text-align: center;
 }
