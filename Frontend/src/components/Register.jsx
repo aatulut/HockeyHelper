@@ -71,7 +71,7 @@ function Register({
         </button>
 
         {profileMessage && (
-          <p className="auth-message">{profileMessage}</p>
+        <p className="error-message">{profileMessage}</p>
         )}
       </div>
     </div>
