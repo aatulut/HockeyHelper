@@ -99,6 +99,14 @@ app.post("/api/predictions", async (req, res) => {
       gameStart: req.body.gameStart
     });
 
+    const startTime = new Date(req.body.gameStart);
+
+    if (new Date() >= startTime) {
+    return res.status(400).json({
+        message: "Predictions are closed for this game"
+    });
+    }
+
     const savedPrediction = await prediction.save();
 
     res.status(201).json(savedPrediction);
